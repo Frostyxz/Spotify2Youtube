@@ -18,7 +18,6 @@ import json
 #TODO
 #1. Set up multiple proxies in case on fails
 #2. Make some of the code prettier with dem functions and enumerate if possible instead of counters
-#3. Add a txt file or something that stores songs you've already downloaded
 
 #File location or url for spotify playlist
 url = r"C:\Users\steel\Desktop\spotifysource.html"
@@ -34,6 +33,52 @@ maxDuration = 4
 proxies = {
   'https': 'https://37.120.177.241:3128',
 }
+
+#Json stuff
+#Path to the json file
+storageFile = 'storage.txt'
+#Json object
+storage = {}
+storage['Songs'] = []
+
+#Checks if file exists
+def storageChecker(file_name):
+    try:
+        open(file_name)
+    except IOError:
+        print('NOTE: Previous storage file not found, another will be made if possible.')
+        return False
+    return True
+
+#Reads a json file and appends the contents to the object
+def storageReader(file_name, storage):
+    with open(file_name) as json_file:
+        storageTemp = json.load(json_file)
+        for s in storageTemp['Songs']:
+            storage['Songs'].append(s)
+            print('Song found:' , s['name'])
+        return storage
+
+#Appends a lists elements to the json object
+def storageAppend(storage, list):
+    for ele in list:
+        storage['Songs'].append({
+            'name': ele,
+        })
+    return storage
+
+#Checks if a list's content matches a json object's content
+def storageMatch(storage, list):
+    for i, ele in enumerate(storage['Songs']):
+        if ele['name'] in list:
+            print("Song already found, removing:" , ele['name'])
+            list.remove(ele['name'])
+    return list
+
+#Writes to the file
+def storageWriter(file_name, storage):
+    with open(file_name, 'w') as outfile:
+        json.dump(storage, outfile, indent=2)
 
 def findYTubeURL(search):
     textToSearch = search
@@ -76,6 +121,17 @@ for count, song in enumerate(soup.find_all('span', {'class' : 'artists-album ell
     searchInput[count] += " " + stringSplit[0] + " " + stringSplit[1]
 
 youtubeURLS = []
+
+#Json stuff
+if storageChecker(storageFile) == True:
+    storage = storageReader(storageFile, storage)
+    searchInput = storageMatch(storage, searchInput)
+storage = storageAppend(storage, searchInput)
+storageWriter(storageFile, storage)
+
+if len(searchInput) == 0:
+    print('No new songs were found exiting application.')
+    exit()
 
 #Finds Youtube url from song name, artist name and album name, doesn't return playlists and chooses from the first video down
 c = 1
