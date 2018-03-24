@@ -1,10 +1,7 @@
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup
-import urllib.request
-import urllib.parse
-import requests
-import youtube_dl
-import json
+import storageFunctions
+import yTFunctions
 
 #Search term                                             | URL                                        |Time
 #Mountain Sound Of Monsters and Men My Head Is An Animal | https://www.youtube.com/watch?v=hQJv7fcQduM 4:35
@@ -41,74 +38,6 @@ storageFile = 'storage.txt'
 storage = {}
 storage['Songs'] = []
 
-#Checks if file exists
-def storageChecker(file_name):
-    try:
-        open(file_name)
-    except IOError:
-        print('NOTE: Previous storage file not found, another will be made if possible.')
-        return False
-    return True
-
-#Reads a json file and appends the contents to the object
-def storageReader(file_name, storage):
-    with open(file_name) as json_file:
-        storageTemp = json.load(json_file)
-        for s in storageTemp['Songs']:
-            storage['Songs'].append(s)
-            print('Song found:' , s['name'])
-        return storage
-
-#Appends a lists elements to the json object
-def storageAppend(storage, list):
-    for ele in list:
-        storage['Songs'].append({
-            'name': ele,
-        })
-    return storage
-
-#Checks if a list's content matches a json object's content
-def storageMatch(storage, list):
-    for i, ele in enumerate(storage['Songs']):
-        if ele['name'] in list:
-            print("Song already found, removing:" , ele['name'])
-            list.remove(ele['name'])
-    return list
-
-#Writes to the file
-def storageWriter(file_name, storage):
-    with open(file_name, 'w') as outfile:
-        json.dump(storage, outfile, indent=2)
-
-def findYTubeURL(search):
-    textToSearch = search
-    query = urllib.parse.quote(textToSearch)
-    domain = 'https://www.youtube.com'
-    url = domain + "/results?search_query=" + query
-
-    req = requests.get(url, proxies=proxies)
-
-    if req.status_code == 503:
-        print(req.status_code, req.reason)
-        return -1
-    else:
-        print(req.status_code, req.reason)
-
-    html = req.text
-    soup = BeautifulSoup(html, "html.parser")
-
-    songs = soup.findAll(attrs={'class': 'yt-uix-tile-link'})
-    duration = soup.findAll('span', {'class': 'video-time'})
-
-    c = 0
-    #Checks if the youtube video link isn't a playlist and the duration isn't longer than the max duration
-    while True:
-        if "list=" not in songs[c]['href'] and len(duration[c].text) <= maxDuration:
-            print(domain + songs[c]['href'] , duration[c].text)
-            return (domain + songs[c]['href'])
-        else:
-            c+= 1
-
 #Getting song/track name
 for count, song in enumerate(soup.find_all('span', {'class' : 'tracklist-name'})):
     currentSong = "".join(song.strings)
@@ -123,21 +52,23 @@ for count, song in enumerate(soup.find_all('span', {'class' : 'artists-album ell
 youtubeURLS = []
 
 #Json stuff
-if storageChecker(storageFile) == True:
-    storage = storageReader(storageFile, storage)
-    searchInput = storageMatch(storage, searchInput)
-storage = storageAppend(storage, searchInput)
-storageWriter(storageFile, storage)
+if storageFunctions.storageChecker(storageFile) == True:
+    storage = storageFunctions.storageReader(storageFile, storage)
+    searchInput = storageFunctions.storageMatch(storage, searchInput)
+storage = storageFunctions.storageAppend(storage, searchInput)
+storageFunctions.storageWriter(storageFile, storage)
 
 if len(searchInput) == 0:
     print('No new songs were found exiting application.')
+    # Stops the window from auto closing
+    input("Press enter to exit: ")
     exit()
 
 #Finds Youtube url from song name, artist name and album name, doesn't return playlists and chooses from the first video down
 c = 1
 for ele in searchInput:
     print(ele)
-    curURL = findYTubeURL(ele)
+    curURL = yTFunctions.findYTubeURL(ele, proxies, maxDuration)
     youtubeURLS.append(curURL)
     print(c , r"/" , (len(searchInput)))
     c += 1
@@ -152,10 +83,8 @@ ydl_opts = {
     }],
 }
 
-
 #Downloads video
-c = 1
-with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    while c < len(youtubeURLS):
-        ydl.download([youtubeURLS[c]])
-        c += 1
+yTFunctions.downloadSongs(ydl_opts, youtubeURLS)
+
+#Stops the window from auto closing
+input("Press enter to exit: ")
