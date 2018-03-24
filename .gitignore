@@ -1,3 +1,4 @@
 .idea/
 test.py
 storage.txt
+__pycache__
