@@ -12,9 +12,12 @@ import yTFunctions
 #Naive The Kooks Inside In / Inside Out https://www.youtube.com/watch?v=jkaMiaRLgvY 3:29
 #This video is unavailable and crashes the program
 
+#soup = BeautifulSoup(open(url), "html.parser") Crashes if theres a Japanese character, probably more if tested
+
 #TODO
 #1. Set up multiple proxies in case on fails
 #2. Make some of the code prettier with dem functions and enumerate if possible instead of counters
+#3. Use the spotify api to access the playlists
 
 #File location or url for spotify playlist
 url = r"C:\Users\steel\Desktop\spotifysource.html"
