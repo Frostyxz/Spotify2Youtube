@@ -1,4 +1,8 @@
 .idea/
+build/
+dist/
+.cache-12169921454
+main.spec
 test.py
 storage.txt
 __pycache__
