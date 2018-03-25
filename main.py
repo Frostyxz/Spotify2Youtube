@@ -18,9 +18,11 @@ import yTFunctions
 #1. Set up multiple proxies in case on fails
 #2. Make some of the code prettier with dem functions and enumerate if possible instead of counters
 #3. Use the spotify api to access the playlists
+#4. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
+#5. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
 #File location or url for spotify playlist
-url = r"C:\Users\steel\Desktop\spotifysource.html"
+url = r"spotifysource.html"
 
 soup = BeautifulSoup(open(url), "html.parser")
 
