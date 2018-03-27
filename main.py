@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from bs4 import BeautifulSoup
 import storageFunctions
 import yTFunctions
+import spotifyFunctions
 
 #Search term                                             | URL                                        |Time
 #Mountain Sound Of Monsters and Men My Head Is An Animal | https://www.youtube.com/watch?v=hQJv7fcQduM 4:35
@@ -22,10 +23,6 @@ import yTFunctions
 #5. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
 #File location or url for spotify playlist
-url = r"spotifysource.html"
-
-soup = BeautifulSoup(open(url), "html.parser")
-
 searchInput = []
 
 #9 minutes 99 seconds = 9:59 so 5 would be 99:59
@@ -43,16 +40,20 @@ storageFile = 'storage.txt'
 storage = {}
 storage['Songs'] = []
 
-#Getting song/track name
-for count, song in enumerate(soup.find_all('span', {'class' : 'tracklist-name'})):
-    currentSong = "".join(song.strings)
-    searchInput.append(currentSong)
+#Spotify stuff
+scope = 'user-library-read'
 
-#Getting artist Album and artist name
-for count, song in enumerate(soup.find_all('span', {'class' : 'artists-album ellipsis-one-line'})):
-    currentSong = "".join(song.strings)
-    stringSplit = currentSong.split("â€¢")
-    searchInput[count] += " " + stringSplit[0] + " " + stringSplit[1]
+spotipyData = {
+    'client_id': '1ea0690b6547477ca467594d6e4969bb',
+    'client_secret': 'e1523338e66f410c955678207064539c',
+    'redirect_uri': 'http://localhost'
+}
+
+username = '12169921454'
+
+#Getting song/track name
+spotify = spotifyFunctions.spotify(username, scope, spotipyData)
+searchInput = spotify.get_yourMusicLibrary_tracks()
 
 youtubeURLS = []
 

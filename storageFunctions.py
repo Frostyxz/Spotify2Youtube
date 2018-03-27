@@ -32,7 +32,7 @@ def storageAppend(storage, list):
 def storageMatch(storage, list):
     for i, ele in enumerate(storage['Songs']):
         if ele['name'] in list:
-            print("Song already found, removing:" , ele['name'])
+            print("Song already found, removing:" , ele)
             list.remove(ele['name'])
     return list
 
