@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from bs4 import BeautifulSoup
 import storageFunctions
 import yTFunctions
 import spotifyFunctions
@@ -29,6 +28,7 @@ searchInput = []
 maxDuration = 4
 
 #Proxies to connect through go here, Youtube seems to block an ip with a 503 error after to many queries
+#You can make ftp: and htpp:, I'm not sure if you can add multiple of the same though, have to test.
 proxies = {
   'https': 'https://37.120.177.241:3128',
 }
@@ -41,15 +41,18 @@ storage = {}
 storage['Songs'] = []
 
 #Spotify stuff
+#What the application wants permission to do
 scope = 'user-library-read'
 
+#You get this by making a spotify app. Make sure you get the redirect_url to be the same in the settings of the app to here, otherwise an error will happen
 spotipyData = {
-    'client_id': '1ea0690b6547477ca467594d6e4969bb',
-    'client_secret': 'e1523338e66f410c955678207064539c',
+    'client_id': 'yourClientIDHere',
+    'client_secret': 'yourClientSecretHere',
     'redirect_uri': 'http://localhost'
 }
 
-username = '12169921454'
+#Username of the spotify account. Facebook usernames are a sequence of numbers, I'm not sure about non facebook accounts
+username = 'yourUserNameHere'
 
 #Getting song/track name
 spotify = spotifyFunctions.spotify(username, scope, spotipyData)
