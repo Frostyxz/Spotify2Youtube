@@ -58,6 +58,7 @@ username = 'yourUserNameHere'
 spotify = spotifyFunctions.spotify(username, scope, spotipyData)
 searchInput = spotify.get_yourMusicLibrary_tracks()
 
+#The YouTube video /watch URL, values are from yTFunctions.findYTubeURL
 youtubeURLS = []
 
 #Json stuff
