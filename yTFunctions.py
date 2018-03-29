@@ -14,6 +14,7 @@ def findYTubeURL(search, proxies, maxDuration):
 
     req = requests.get(url, proxies=proxies)
 
+
     if req.status_code == 503:
         print(req.status_code, req.reason)
         return -1
