@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import storageFunctions
 import yTFunctions
 import spotifyFunctions
+import time
 
 #Search term                                             | URL                                        |Time
 #Mountain Sound Of Monsters and Men My Head Is An Animal | https://www.youtube.com/watch?v=hQJv7fcQduM 4:35
@@ -18,6 +19,8 @@ import spotifyFunctions
 #1. Set up multiple proxies in case on fails
 #2. Make some of the code prettier with dem functions and enumerate if possible instead of counters
 #3. Use the spotify api to access the playlists
+#   a. Generate a list of found playlists
+#   b. Let user select which playlist they want data from
 #4. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
 #5. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
@@ -29,8 +32,10 @@ maxDuration = 4
 
 #Proxies to connect through go here, Youtube seems to block an ip with a 503 error after to many queries
 #You can make ftp: and htpp:, I'm not sure if you can add multiple of the same though, have to test.
+#Sometimes the proxie hosts fucks you, try changing both the http and https proxies if you are getting [WinError 10054] or something similar
 proxies = {
-  'https': 'https://37.120.177.241:3128',
+    'https': 'https://159.65.110.167:3128',
+    'http': 'http://192.116.142.153:8080'
 }
 
 #Json stuff
@@ -46,17 +51,36 @@ scope = 'user-library-read'
 
 #You get this by making a spotify app. Make sure you get the redirect_url to be the same in the settings of the app to here, otherwise an error will happen
 spotipyData = {
-    'client_id': 'yourClientIDHere',
-    'client_secret': 'yourClientSecretHere',
+    'client_id': '1ea0690b6547477ca467594d6e4969bb',
+    'client_secret': 'e1523338e66f410c955678207064539c',
     'redirect_uri': 'http://localhost'
 }
 
 #Username of the spotify account. Facebook usernames are a sequence of numbers, I'm not sure about non facebook accounts
-username = 'yourUserNameHere'
+username = '12169921454'
 
 #Getting song/track name
-spotify = spotifyFunctions.spotify(username, scope, spotipyData)
-searchInput = spotify.get_yourMusicLibrary_tracks()
+spotify = spotifyFunctions.spotipyHandle(username, scope, spotipyData)
+
+avaliablePlaylists = spotify.get_playlists_ID()
+
+print('Playlists found: ')
+
+#Prints Favorites playlist since that won't be found it must be done separately
+print('> Favorites')
+
+#Prints all found playlists
+for playlist in avaliablePlaylists:
+    print('>', playlist)
+print('Please type a playlist name exactly the same as shown above.')
+
+#The exact name of a playlist should be given as a string
+userInputPlaylist = input('> ')
+
+if userInputPlaylist != 'Favorites':
+    searchInput = spotify.get_playlist_tracks(avaliablePlaylists[userInputPlaylist][0], avaliablePlaylists[userInputPlaylist][1])
+else:
+    searchInput = spotify.get_favorite_playlist_tracks()
 
 #The YouTube video /watch URL, values are from yTFunctions.findYTubeURL
 youtubeURLS = []
