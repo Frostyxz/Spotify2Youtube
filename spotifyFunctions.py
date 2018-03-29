@@ -26,7 +26,7 @@ class spotipyHandle:
 
 #Returns a dictionary with all playlist names bound with their respective id
 #If a user has two playlists with the exact same name the dictionary will wipe the first playlist
-    def get_playlists_ID(self):
+    def get_playlists_id(self):
         playlists = self.sp.current_user_playlists()
         playlist = playlists['items']
         playlistReturn = {}

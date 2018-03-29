@@ -3,7 +3,7 @@ import json
 #Functions for storage
 
 #Checks if file exists
-def storageChecker(file_name):
+def storage_checker(file_name):
     try:
         open(file_name)
     except IOError:
@@ -12,7 +12,7 @@ def storageChecker(file_name):
     return True
 
 #Reads a json file and appends the contents to the object
-def storageReader(file_name, storage):
+def storage_reader(file_name, storage):
     with open(file_name) as json_file:
         storageTemp = json.load(json_file)
         for s in storageTemp['Songs']:
@@ -21,7 +21,7 @@ def storageReader(file_name, storage):
         return storage
 
 #Appends a lists elements to the json object
-def storageAppend(storage, list):
+def storage_append(storage, list):
     for ele in list:
         storage['Songs'].append({
             'name': ele,
@@ -29,7 +29,7 @@ def storageAppend(storage, list):
     return storage
 
 #Checks if a list's content matches a json object's content
-def storageMatch(storage, list):
+def storage_match(storage, list):
     for i, ele in enumerate(storage['Songs']):
         if ele['name'] in list:
             print("Song already found, removing:" , ele['name'])
@@ -37,6 +37,6 @@ def storageMatch(storage, list):
     return list
 
 #Writes to the file
-def storageWriter(file_name, storage):
+def storage_writer(file_name, storage):
     with open(file_name, 'w') as outfile:
         json.dump(storage, outfile, indent=2)

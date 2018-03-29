@@ -6,7 +6,7 @@ import youtube_dl
 
 #Functions for YouTube
 
-def findYTubeURL(search, proxies, maxDuration):
+def find_youtube_url(search, proxies, maxDuration):
     textToSearch = search
     query = urllib.parse.quote(textToSearch)
     domain = 'https://www.youtube.com'
@@ -37,7 +37,7 @@ def findYTubeURL(search, proxies, maxDuration):
             c+= 1
 
 #Downloads the song based on the ydl_opts
-def downloadSongs(ydl_opts, youtubeURLS):
+def download_songs(ydl_opts, youtubeURLS):
     c = 0
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         while c < len(youtubeURLS):

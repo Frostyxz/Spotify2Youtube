@@ -59,7 +59,7 @@ username = '12169921454'
 spotify = spotifyFunctions.spotipyHandle(username, scope, spotipyData)
 
 #Finding all of the users playlists
-avaliablePlaylists = spotify.get_playlists_ID()
+avaliablePlaylists = spotify.get_playlists_id()
 
 print('Playlists found: ')
 
@@ -85,11 +85,11 @@ youtubeURLS = []
 
 #Json storage file checker, sees if the file exists and if it does it compares it to the list and deletes previously downloaded songs
 #then it appends the list to the json object and the json object is  dumped to the file completely re-writing it
-if storageFunctions.storageChecker(storageFile) == True:
-    storage = storageFunctions.storageReader(storageFile, storage)
-    searchInput = storageFunctions.storageMatch(storage, searchInput)
-storage = storageFunctions.storageAppend(storage, searchInput)
-storageFunctions.storageWriter(storageFile, storage)
+if storageFunctions.storage_checker(storageFile) == True:
+    storage = storageFunctions.storage_reader(storageFile, storage)
+    searchInput = storageFunctions.storage_match(storage, searchInput)
+storage = storageFunctions.storage_append(storage, searchInput)
+storageFunctions.storage_writer(storageFile, storage)
 
 if len(searchInput) == 0:
     print('No new songs were found exiting application.')
@@ -101,7 +101,7 @@ if len(searchInput) == 0:
 c = 1
 for ele in searchInput:
     print(ele)
-    curURL = yTFunctions.findYTubeURL(ele, proxies, maxDuration)
+    curURL = yTFunctions.find_youtube_url(ele, proxies, maxDuration)
     youtubeURLS.append(curURL)
     print(c , r"/" , (len(searchInput)))
     c += 1
@@ -117,7 +117,7 @@ ydl_opts = {
 }
 
 #Downloads video
-yTFunctions.downloadSongs(ydl_opts, youtubeURLS)
+yTFunctions.download_songs(ydl_opts, youtubeURLS)
 
 #Stops the window from auto closing
 input("Press enter to exit: ")
