@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import storageFunctions
 import yTFunctions
 import spotifyFunctions
-import time
 
 #Search term                                             | URL                                        |Time
 #Mountain Sound Of Monsters and Men My Head Is An Animal | https://www.youtube.com/watch?v=hQJv7fcQduM 4:35
@@ -18,11 +17,8 @@ import time
 #TODO
 #1. Set up multiple proxies in case on fails
 #2. Make some of the code prettier with dem functions and enumerate if possible instead of counters
-#3. Use the spotify api to access the playlists
-#   a. Generate a list of found playlists
-#   b. Let user select which playlist they want data from
-#4. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
-#5. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
+#3. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
+#4. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
 #File location or url for spotify playlist
 searchInput = []
@@ -59,9 +55,10 @@ spotipyData = {
 #Username of the spotify account. Facebook usernames are a sequence of numbers, I'm not sure about non facebook accounts
 username = '12169921454'
 
-#Getting song/track name
+#Initialising spotify class
 spotify = spotifyFunctions.spotipyHandle(username, scope, spotipyData)
 
+#Finding all of the users playlists
 avaliablePlaylists = spotify.get_playlists_ID()
 
 print('Playlists found: ')
@@ -77,6 +74,7 @@ print('Please type a playlist name exactly the same as shown above.')
 #The exact name of a playlist should be given as a string
 userInputPlaylist = input('> ')
 
+#Gets the track's name and artist from the playlist, since the favorite's playlist isn't obtainable in user_playlist_tracks() this is a work around
 if userInputPlaylist != 'Favorites':
     searchInput = spotify.get_playlist_tracks(avaliablePlaylists[userInputPlaylist][0], avaliablePlaylists[userInputPlaylist][1])
 else:
@@ -85,7 +83,8 @@ else:
 #The YouTube video /watch URL, values are from yTFunctions.findYTubeURL
 youtubeURLS = []
 
-#Json stuff
+#Json storage file checker, sees if the file exists and if it does it compares it to the list and deletes previously downloaded songs
+#then it appends the list to the json object and the json object is  dumped to the file completely re-writing it
 if storageFunctions.storageChecker(storageFile) == True:
     storage = storageFunctions.storageReader(storageFile, storage)
     searchInput = storageFunctions.storageMatch(storage, searchInput)
