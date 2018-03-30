@@ -21,6 +21,7 @@ import configReader
 #3. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
 #4. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
+#Checks if the config file exists, if not it makes one based off the template in the configReader.py file and exits the application so the user can fill it in and restart the application
 if configReader.check_config('config.ini') == False:
     print('A template will be made. The application will close after creating the template so you should complete the config file.')
     configReader.create_config_template()
