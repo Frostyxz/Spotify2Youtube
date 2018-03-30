@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import storageFunctions
 import yTFunctions
 import spotifyFunctions
+import configReader
 
 #Search term                                             | URL                                        |Time
 #Mountain Sound Of Monsters and Men My Head Is An Animal | https://www.youtube.com/watch?v=hQJv7fcQduM 4:35
@@ -20,43 +21,39 @@ import spotifyFunctions
 #3. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
 #4. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
-#File location or url for spotify playlist
-searchInput = []
+if configReader.check_config('config.ini') == False:
+    print('A template will be made. The application will close after creating the template so you should complete the config file.')
+    configReader.create_config_template()
+    exit()
 
-#9 minutes 99 seconds = 9:59 so 5 would be 99:59
-maxDuration = 4
+#4 = 9 minutes 99 seconds = 9:59 so 5 would be 59:59
+youtubeSettings = configReader.read_config_section('Youtube')
 
 #Proxies to connect through go here, Youtube seems to block an ip with a 503 error after to many queries
 #You can make ftp: and htpp:, I'm not sure if you can add multiple of the same though, have to test.
 #Sometimes the proxie hosts fucks you, try changing both the http and https proxies if you are getting [WinError 10054] or something similar
-proxies = {
-    'https': 'https://159.65.110.167:3128',
-    'http': 'http://192.116.142.153:8080'
-}
+proxies = configReader.read_config_section('Proxies')
+
+#Spotify stuff
+#You get this by making a spotify app. Make sure you get the redirect_url to be the same in the settings of the app to here, otherwise an error will happen
+spotipyData = configReader.read_config_section('SpotifyApp')
+
+#Username - Username of the Spotify account. Facebook username's are a sequence of numbers, I'm not sure about non facebook accounts
+#Scope - What the application wants permission to do
+spotifyInfo = configReader.read_config_section('Spotify')
 
 #Json stuff
 #Path to the json file
-storageFile = 'storage.txt'
+storageFile = configReader.read_config_section('Storage')
 #Json object
 storage = {}
 storage['Songs'] = []
 
-#Spotify stuff
-#What the application wants permission to do
-scope = 'user-library-read'
-
-#You get this by making a spotify app. Make sure you get the redirect_url to be the same in the settings of the app to here, otherwise an error will happen
-spotipyData = {
-    'client_id': '1ea0690b6547477ca467594d6e4969bb',
-    'client_secret': 'e1523338e66f410c955678207064539c',
-    'redirect_uri': 'http://localhost'
-}
-
-#Username of the spotify account. Facebook usernames are a sequence of numbers, I'm not sure about non facebook accounts
-username = '12169921454'
+#File location or url for spotify playlist
+searchInput = []
 
 #Initialising spotify class
-spotify = spotifyFunctions.spotipyHandle(username, scope, spotipyData)
+spotify = spotifyFunctions.spotipyHandle(spotifyInfo['username'], spotifyInfo['scope'], spotipyData)
 
 #Finding all of the users playlists
 avaliablePlaylists = spotify.get_playlists_id()
@@ -85,11 +82,11 @@ youtubeURLS = []
 
 #Json storage file checker, sees if the file exists and if it does it compares it to the list and deletes previously downloaded songs
 #then it appends the list to the json object and the json object is  dumped to the file completely re-writing it
-if storageFunctions.storage_checker(storageFile) == True:
-    storage = storageFunctions.storage_reader(storageFile, storage)
+if storageFunctions.storage_checker(storageFile['fileName']) == True:
+    storage = storageFunctions.storage_reader(storageFile['fileName'], storage)
     searchInput = storageFunctions.storage_match(storage, searchInput)
 storage = storageFunctions.storage_append(storage, searchInput)
-storageFunctions.storage_writer(storageFile, storage)
+storageFunctions.storage_writer(storageFile['fileName'], storage)
 
 if len(searchInput) == 0:
     print('No new songs were found exiting application.')
@@ -101,7 +98,7 @@ if len(searchInput) == 0:
 c = 1
 for ele in searchInput:
     print(ele)
-    curURL = yTFunctions.find_youtube_url(ele, proxies, maxDuration)
+    curURL = yTFunctions.find_youtube_url(ele, proxies, int(youtubeSettings['maxDuration']))
     youtubeURLS.append(curURL)
     print(c , r"/" , (len(searchInput)))
     c += 1
