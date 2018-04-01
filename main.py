@@ -52,6 +52,49 @@ storage['Songs'] = []
 #File location or url for spotify playlist
 searchInput = []
 
+#Bind
+#A Bind is a json file that holds the paths to the storage files
+#the bind variable is a json object within the code
+bind = {}
+bind['Links'] = []
+
+playlistPaths = []
+
+if storageFunctions.storage_checker('bind.txt') == True:
+    bind = storageFunctions.storage_reader('bind.txt', bind, 'Links', 'path')
+    for c,  link in enumerate(bind['Links']):
+        print('>', c , ' -  Link was found at: ', link['path'])
+        playlistPaths.append(link['path'])
+
+print('Do you want to link a new folder? y/n')
+if input('> ') == 'y':
+    print('Please enter the path to the new folder')
+    playlistPath = input('> ')
+    storageFilePath = playlistPath + '\\' + storageFile['fileName']
+    foo = storageFile['fileName']
+
+    #Checking if a storage file is at the path location, and prompts the user if they still want to overwrite it
+    if storageFunctions.storage_checker(storageFilePath) == True:
+        print('A linked playlist was found at that location, would you still like to continue? y/n')
+        if input('> ') == 'n':
+            exit()
+
+
+    #Made a temp list because of the way the storage_append function works. It needs an array input not a string
+    tempPlaylistPath = []
+    tempPlaylistPath.append(playlistPath)
+    #Appends and writes to bind.txt file
+    bind = storageFunctions.storage_append(bind, tempPlaylistPath , 'Links', 'path')
+    storageFunctions.storage_writer('bind.txt', bind)
+
+else:
+    print('Please enter the playlist value which you want')
+    playlistSelector = input('> ')
+    playlistPath = playlistPaths[int(playlistSelector)]
+    storageFilePath = playlistPath + '\\' + storageFile['fileName']
+    print('Playlist selected at path:', playlistPath)
+
+
 #Initialising spotify class
 spotify = spotifyFunctions.spotipyHandle(spotifyInfo['username'], spotifyInfo['scope'], spotipyData)
 
@@ -82,11 +125,11 @@ youtubeURLS = []
 
 #Json storage file checker, sees if the file exists and if it does it compares it to the list and deletes previously downloaded songs
 #then it appends the list to the json object and the json object is  dumped to the file completely re-writing it
-if storageFunctions.storage_checker(storageFile['fileName']) == True:
-    storage = storageFunctions.storage_reader(storageFile['fileName'], storage)
+if storageFunctions.storage_checker(storageFilePath) == True:
+    storage = storageFunctions.storage_reader(storageFilePath, storage, 'Songs', 'name')
     searchInput = storageFunctions.storage_match(storage, searchInput)
-storage = storageFunctions.storage_append(storage, searchInput)
-storageFunctions.storage_writer(storageFile['fileName'], storage)
+storage = storageFunctions.storage_append(storage, searchInput, 'Songs', 'name')
+storageFunctions.storage_writer(storageFilePath, storage)
 
 if len(searchInput) == 0:
     print('No new songs were found exiting application.')
@@ -105,6 +148,7 @@ for ele in searchInput:
 
 #Downloader options
 ydl_opts = {
+    'outtmpl': playlistPath + '\\%(title)s.%(ext)s',
     'format': 'bestaudio/best',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
