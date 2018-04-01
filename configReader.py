@@ -13,7 +13,7 @@ def create_config_template():
     config['Proxies'] = {'https': 'https://IP:PORT',
                          'http': 'http://111.111.111.111:1111'}
     config['Storage'] = {'fileName': 'storage.txt',
-                         'filePath': r'D:\path'}
+                         'filePath': 'path'}
     config['SpotifyApp'] = {'client_id': 'Your client id',
                          'client_secret': 'Your client secret id',
                          'redirect_uri': 'http://localhost'}
