@@ -7,24 +7,24 @@ def storage_checker(file_name):
     try:
         open(file_name)
     except IOError:
-        print('NOTE: Previous storage file not found, another will be made if possible.')
+        print('NOTE:', file_name, 'file not found, another will be made if possible.')
         return False
     return True
 
 #Reads a json file and appends the contents to the object
-def storage_reader(file_name, storage):
+def storage_reader(file_name, storage, parent, child):
     with open(file_name) as json_file:
         storageTemp = json.load(json_file)
-        for s in storageTemp['Songs']:
-            storage['Songs'].append(s)
-            print('Song found:' , s['name'])
+        for s in storageTemp[parent]:
+            storage[parent].append(s)
+            print(parent, 'found:' , s[child])
         return storage
 
 #Appends a lists elements to the json object
-def storage_append(storage, list):
+def storage_append(storage, list, parent, child):
     for ele in list:
-        storage['Songs'].append({
-            'name': ele,
+        storage[parent].append({
+            child: ele,
         })
     return storage
 
