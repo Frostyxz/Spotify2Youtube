@@ -18,8 +18,7 @@ import configReader
 #TODO
 #1. Set up multiple proxies in case on fails
 #2. Make some of the code prettier with dem functions and enumerate if possible instead of counters
-#3. Make a config file so its PyInstaller exe works easier (add ydl_opts to config file)
-#4. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
+#3. Add a path variable to the song downloader (The storage should also go there? or give an option for an independent playlist?)
 
 #Checks if the config file exists, if not it makes one based off the template in the configReader.py file and exits the application so the user can fill it in and restart the application
 if configReader.check_config('config.ini') == False:
